@@ -57,15 +57,50 @@ body {
 /* Starfield, fixed behind the page. On a pseudo-element rather than the body
    so it stays put on mobile, where background-attachment: fixed is ignored.
    The dark wash over the image keeps text readable. */
+/* The backdrop is taller than the screen and slides up as the page scrolls
+   (js/effects.js sets --scroll-progress from 0 to 1), so it moves more slowly
+   than the content in front of it. */
 body::before {
+    --parallax-travel: 30vh;
     content: "";
     position: fixed;
-    inset: 0;
+    inset: 0 0 auto;
+    height: calc(100vh + var(--parallax-travel));
     z-index: -1;
+    transform: translateY(calc(var(--scroll-progress, 0) * -1 * var(--parallax-travel)));
+    will-change: transform;
     background:
         linear-gradient(rgba(5, 7, 15, 0.5), rgba(5, 7, 15, 0.5)),
         url("../res/images/branding/bg.jpg") center / cover no-repeat,
         var(--space-0);
+}
+
+/* Page scrollbar: a dark track with a blue-to-pink thumb. Chrome, Edge and
+   Safari take the ::-webkit rules; Firefox can't draw a gradient, so it gets a
+   thin blue thumb instead. */
+html::-webkit-scrollbar {
+    width: 12px;
+}
+
+html::-webkit-scrollbar-track {
+    background: var(--space-0);
+}
+
+html::-webkit-scrollbar-thumb {
+    border: 3px solid var(--space-0);
+    border-radius: 6px;
+    background: linear-gradient(var(--cyan), var(--magenta)) padding-box;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+    border-width: 2px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+    html {
+        scrollbar-width: thin;
+        scrollbar-color: var(--cyan) var(--space-0);
+    }
 }
 
 h1, h2, h3 {
@@ -165,7 +200,6 @@ main {
    the border follows the cut corners. */
 .banner-button {
     --cut: 14px;
-    --shape: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut));
     position: relative;
     isolation: isolate;
     display: inline-flex;
@@ -183,7 +217,6 @@ main {
     white-space: nowrap;
     color: var(--banner-text);
     background: var(--banner-border);
-    clip-path: var(--shape);
     transition: filter 0.2s ease-in-out;
 }
 
@@ -193,7 +226,14 @@ main {
     inset: 2px;
     z-index: -1;
     background: var(--banner-fill);
-    clip-path: var(--shape);
+    /* A slightly smaller cut than the outside, so the border is 2px wide
+       along the diagonals too: 14px - 2px * (2 - sqrt(2)). */
+    --cut: 12.83px;
+}
+
+.banner-button,
+.banner-button::before {
+    clip-path: polygon(var(--cut) 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, var(--cut) 100%, 0 calc(100% - var(--cut)), 0 var(--cut));
 }
 
 .banner-button:hover {
@@ -201,13 +241,15 @@ main {
     filter: brightness(1.25);
 }
 
-.banner-button img {
+.banner-button svg {
+    flex: none;
     width: 1.5em;
     height: 1.5em;
+    fill: currentColor;
 }
 
 /* The divider between the logo and the text. */
-.banner-button img + span {
+.banner-button svg + span {
     padding: 0.25em 0 0.25em clamp(12px, 3vw, 22px);
     border-left: 1px solid rgba(255, 255, 255, 0.3);
 }
@@ -215,6 +257,45 @@ main {
 .banner-button em {
     font-style: normal;
     color: var(--banner-accent);
+}
+
+/* Cursor glow: a soft light that follows the pointer across a hovered button.
+   js/effects.js sets --glow-x and --glow-y; the glow sits above the button's
+   fill and below its label. */
+.button,
+.banner-button,
+.carousel-arrow {
+    --glow-size: 90px;
+    isolation: isolate;
+}
+
+.button {
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-arrow {
+    --glow-size: 40px;
+    overflow: hidden;
+}
+
+.button::after,
+.banner-button::after,
+.carousel-arrow::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(circle var(--glow-size) at var(--glow-x, 50%) var(--glow-y, 50%), rgba(255, 255, 255, 0.28), transparent);
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    pointer-events: none;
+}
+
+.button:hover::after,
+.banner-button:hover::after,
+.carousel-arrow:hover::after {
+    opacity: 1;
 }
 
 .button-row {

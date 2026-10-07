@@ -14,8 +14,9 @@ Space Nomads website. Static HTML and CSS, hosted on GitHub Pages.
 | `roadmap.html` | Development roadmap |
 | `css/styles.css` | The only stylesheet, split into `#region` blocks |
 | `js/lightbox.js` | Enlarges gallery screenshots |
-| `js/carousel.js` | Previous/next arrows for the home page carousel |
-| `res/images/` | Branding and social media images |
+| `js/carousel.js` | Arrows and auto-advance for the home page carousel |
+| `js/effects.js` | Cursor glow on buttons and the background parallax |
+| `res/images/` | Branding images and screenshots |
 
 ## Editing notes
 - The header and footer are copied into every page. Change one, change all four.
