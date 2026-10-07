@@ -32,7 +32,8 @@
     --nav-height: 60px;
 }
 
-/*#region ----- Global */
+/*#region ----- Global Body Properties */
+/* Font: Play */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -52,55 +53,6 @@ body {
     font-size: var(--text-body);
     line-height: 1.6;
     color: var(--text);
-}
-
-/* Starfield, fixed behind the page. On a pseudo-element rather than the body
-   so it stays put on mobile, where background-attachment: fixed is ignored.
-   The dark wash over the image keeps text readable. */
-/* The backdrop is taller than the screen and slides up as the page scrolls
-   (js/effects.js sets --scroll-progress from 0 to 1), so it moves more slowly
-   than the content in front of it. */
-body::before {
-    --parallax-travel: 30vh;
-    content: "";
-    position: fixed;
-    inset: 0 0 auto;
-    height: calc(100vh + var(--parallax-travel));
-    z-index: -1;
-    transform: translateY(calc(var(--scroll-progress, 0) * -1 * var(--parallax-travel)));
-    will-change: transform;
-    background:
-        linear-gradient(rgba(5, 7, 15, 0.5), rgba(5, 7, 15, 0.5)),
-        url("../res/images/branding/bg.jpg") center / cover no-repeat,
-        var(--space-0);
-}
-
-/* Page scrollbar: a dark track with a blue-to-pink thumb. Chrome, Edge and
-   Safari take the ::-webkit rules; Firefox can't draw a gradient, so it gets a
-   thin blue thumb instead. */
-html::-webkit-scrollbar {
-    width: 12px;
-}
-
-html::-webkit-scrollbar-track {
-    background: var(--space-0);
-}
-
-html::-webkit-scrollbar-thumb {
-    border: 3px solid var(--space-0);
-    border-radius: 6px;
-    background: linear-gradient(var(--cyan), var(--magenta)) padding-box;
-}
-
-html::-webkit-scrollbar-thumb:hover {
-    border-width: 2px;
-}
-
-@supports not selector(::-webkit-scrollbar) {
-    html {
-        scrollbar-width: thin;
-        scrollbar-color: var(--cyan) var(--space-0);
-    }
 }
 
 h1, h2, h3 {
@@ -138,9 +90,62 @@ img {
 main {
     padding-top: var(--nav-height);
 }
+/*#endregion*/
 
+/*#region ----- Page Background */
+/* Starfield behind the page, under a dark wash that keeps text readable. On a
+   fixed pseudo-element rather than the body, because background-attachment:
+   fixed is ignored on mobile. It is taller than the screen and slides up as
+   the page scrolls (js/effects.js sets --scroll-progress from 0 to 1), so it
+   moves more slowly than the content in front of it. */
+body::before {
+    --parallax-travel: 30vh;
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: -1;
+    height: calc(100vh + var(--parallax-travel));
+    background:
+        linear-gradient(rgba(5, 7, 15, 0.5), rgba(5, 7, 15, 0.5)),
+        url("../res/images/branding/bg.jpg") center / cover no-repeat,
+        var(--space-0);
+    transform: translateY(calc(var(--scroll-progress, 0) * -1 * var(--parallax-travel)));
+    will-change: transform;
+}
+/*#endregion*/
+
+/*#region ----- Page Scrollbar */
+/* A dark track with a blue-to-pink thumb. Chrome, Edge and Safari take the
+   ::-webkit rules; Firefox can't draw a gradient, so it gets a thin blue
+   thumb instead. */
+html::-webkit-scrollbar {
+    width: 12px;
+}
+
+html::-webkit-scrollbar-track {
+    background: var(--space-0);
+}
+
+html::-webkit-scrollbar-thumb {
+    border: 3px solid var(--space-0);
+    border-radius: 6px;
+    background: linear-gradient(var(--cyan), var(--magenta)) padding-box;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+    border-width: 2px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+    html {
+        scrollbar-width: thin;
+        scrollbar-color: var(--cyan) var(--space-0);
+    }
+}
+/*#endregion*/
+
+/*#region ----- Main Page Content Container */
 .section {
-    width: 100%;
     max-width: var(--page-width);
     margin: 0 auto;
     padding: 56px 24px;
@@ -167,15 +172,27 @@ main {
     text-align: center;
     color: var(--text-dim);
 }
+
+/* Title block at the top of the Media, Story and Roadmap pages. */
+.page-hero {
+    padding: 72px 24px 8px;
+    text-align: center;
+}
+
+.page-hero h1 {
+    margin-bottom: 12px;
+}
 /*#endregion*/
 
-/*#region ----- Buttons */
+/*#region ----- Global Button Properties */
+/* Regular button: cyan border, magenta highlight. */
 .button {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
     padding: 12px 26px;
+    overflow: hidden;
     font-size: var(--text-small);
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -201,7 +218,6 @@ main {
 .banner-button {
     --cut: 14px;
     position: relative;
-    isolation: isolate;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -221,14 +237,14 @@ main {
 }
 
 .banner-button::before {
+    /* A slightly smaller cut than the outside, so the border is 2px wide
+       along the diagonals too: 14px - 2px * (2 - sqrt(2)). */
+    --cut: 12.83px;
     content: "";
     position: absolute;
     inset: 2px;
     z-index: -1;
     background: var(--banner-fill);
-    /* A slightly smaller cut than the outside, so the border is 2px wide
-       along the diagonals too: 14px - 2px * (2 - sqrt(2)). */
-    --cut: 12.83px;
 }
 
 .banner-button,
@@ -258,8 +274,10 @@ main {
     font-style: normal;
     color: var(--banner-accent);
 }
+/*#endregion*/
 
-/* Cursor glow: a soft light that follows the pointer across a hovered button.
+/*#region ----- Cursor Glow */
+/* A soft light that follows the pointer across a hovered button.
    js/effects.js sets --glow-x and --glow-y; the glow sits above the button's
    fill and below its label. */
 .button,
@@ -267,16 +285,6 @@ main {
 .carousel-arrow {
     --glow-size: 90px;
     isolation: isolate;
-}
-
-.button {
-    position: relative;
-    overflow: hidden;
-}
-
-.carousel-arrow {
-    --glow-size: 40px;
-    overflow: hidden;
 }
 
 .button::after,
@@ -297,13 +305,70 @@ main {
 .carousel-arrow:hover::after {
     opacity: 1;
 }
+/*#endregion*/
 
-.button-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: stretch;
-    gap: 16px;
+/*#region ----- Sheen Border */
+/* A cyan and pink gradient that drifts sideways. Used for the header's bottom
+   edge and, through .sheen-border, as a frame around the carousel and the
+   trailer. */
+.site-header::after,
+.sheen-border {
+    background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--cyan)) 0 0 / 200% 100%;
+    box-shadow: 0 0 10px rgba(var(--cyan-rgb), 0.5);
+    animation: sheen 6s linear infinite;
+}
+
+/* The gradient shows through a 2px gap around whatever is inside. */
+.sheen-border {
+    padding: 2px;
+}
+
+@keyframes sheen {
+    to { background-position: -200% 0; }
+}
+/*#endregion*/
+
+/*#region ----- Glitch Effects */
+/* Occasional colour-split stutter. data-text must match the element's text. */
+.glitch {
+    position: relative;
+    display: inline-block;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.glitch::before {
+    color: var(--cyan);
+    animation: glitch-split 1s steps(1) infinite;
+}
+
+.glitch::after {
+    color: var(--magenta);
+    animation: glitch-split 1s steps(1) infinite reverse;
+}
+
+@keyframes glitch-split {
+    0%, 79%, 100% { opacity: 0; transform: none; }
+    80% { opacity: 0.8; transform: translateX(-3px); }
+    87% { opacity: 0.8; transform: translateX(3px); }
+    94% { opacity: 0; transform: none; }
+}
+
+/* Corrupted and redacted text, as in the game's lore logs. */
+.corrupted {
+    color: var(--magenta);
+}
+
+.redacted {
+    color: var(--amber);
 }
 /*#endregion*/
 
@@ -318,7 +383,7 @@ main {
     backdrop-filter: blur(8px);
 }
 
-/* Bottom edge: a cyan and pink gradient that drifts sideways, like a sheen. */
+/* Bottom edge. Its colours and motion come from the Sheen Border region. */
 .site-header::after {
     content: "";
     position: absolute;
@@ -326,13 +391,6 @@ main {
     right: 0;
     bottom: -2px;
     height: 2px;
-    background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--cyan)) 0 0 / 200% 100%;
-    box-shadow: 0 0 10px rgba(var(--cyan-rgb), 0.5);
-    animation: header-sheen 6s linear infinite;
-}
-
-@keyframes header-sheen {
-    to { background-position: -200% 0; }
 }
 
 .site-nav {
@@ -371,12 +429,6 @@ main {
     gap: 8px;
 }
 
-/* The burger and its checkbox only appear on narrow screens (see Media Queries). */
-.nav-toggle,
-.nav-burger {
-    display: none;
-}
-
 .nav-link {
     padding: 6px 12px;
     font-size: var(--text-small);
@@ -411,7 +463,108 @@ main {
 }
 /*#endregion*/
 
-/*#region ----- Hero */
+/*#region ----- Mobile Navigation */
+/* The burger and the checkbox that holds its open state are hidden until the
+   screen is narrow. */
+.nav-toggle,
+.nav-burger {
+    display: none;
+}
+
+/* Below this width the page links no longer fit beside the brand and wishlist
+   button, so they collapse into a dropdown. Zooming in on a desktop browser
+   triggers this too. */
+@media screen and (max-width: 760px) {
+    .site-nav .button {
+        order: 1;
+    }
+
+    .nav-burger {
+        order: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+    }
+
+    /* Three bars: the span is the middle one. They fold into a cross when open. */
+    .nav-burger span,
+    .nav-burger span::before,
+    .nav-burger span::after {
+        display: block;
+        width: 24px;
+        height: 2px;
+        border-radius: 1px;
+        background: var(--text);
+        transition: transform 0.2s ease-in-out, background 0.2s ease-in-out;
+    }
+
+    .nav-burger span {
+        position: relative;
+    }
+
+    .nav-burger span::before,
+    .nav-burger span::after {
+        content: "";
+        position: absolute;
+        left: 0;
+    }
+
+    .nav-burger span::before { top: -8px; }
+    .nav-burger span::after { top: 8px; }
+
+    .nav-toggle:checked + .nav-burger span { background: transparent; }
+    .nav-toggle:checked + .nav-burger span::before { transform: translateY(8px) rotate(45deg); }
+    .nav-toggle:checked + .nav-burger span::after { transform: translateY(-8px) rotate(-45deg); }
+
+    /* The checkbox stays focusable for keyboards but is visually hidden. */
+    .nav-toggle {
+        display: block;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+    }
+
+    .nav-toggle:focus-visible + .nav-burger {
+        outline: 2px solid var(--cyan);
+        outline-offset: 2px;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: calc(100% + 2px);
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 8px 0;
+        background: var(--space-0);
+        border-bottom: 1px solid var(--space-3);
+    }
+
+    .nav-toggle:checked ~ .nav-links {
+        display: flex;
+    }
+
+    .nav-links .nav-link {
+        padding: 12px 24px;
+        border-bottom: 0;
+        border-left: 2px solid transparent;
+    }
+
+    .nav-links .nav-link:hover,
+    .nav-links .nav-link[aria-current="page"] {
+        border-left-color: var(--magenta);
+    }
+}
+/*#endregion*/
+
+/*#region ----- Homepage Hero */
 .hero {
     display: flex;
     flex-direction: column;
@@ -430,7 +583,8 @@ main {
     height: auto;
 }
 
-/* Status line above the logo: plain text between two fading rules. Deliberately not button-shaped, since it isn't clickable. */
+/* Status line above the logo: plain text between two fading rules.
+   Deliberately not button-shaped, since it isn't clickable. */
 .status-line {
     display: flex;
     align-items: center;
@@ -457,19 +611,9 @@ main {
     max-width: 720px;
     font-size: var(--text-lead);
 }
-
-/* Smaller hero for the inner pages. */
-.page-hero {
-    padding: 72px 24px 8px;
-    text-align: center;
-}
-
-.page-hero h1 {
-    margin-bottom: 12px;
-}
 /*#endregion*/
 
-/*#region ----- Features */
+/*#region ----- Homepage Features */
 .feature-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -511,13 +655,14 @@ main {
 }
 /*#endregion*/
 
-/*#region ----- Media (screenshots, trailer, lightbox) */
+/*#region ----- Screenshots (grid tiles and lightbox) */
 .media-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 16px;
 }
 
+/* One screenshot link. Used in the Media grid and as a carousel slide. */
 .shot {
     display: block;
     aspect-ratio: 16 / 9;
@@ -538,18 +683,30 @@ main {
     object-fit: cover;
 }
 
-/* The same drifting cyan and pink edge as the header, for framed media (the
-   carousel and the trailer). The gradient shows through a 2px gap around
-   whatever is inside. */
-.sheen-border {
-    padding: 2px;
-    background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--cyan)) 0 0 / 200% 100%;
-    box-shadow: 0 0 10px rgba(var(--cyan-rgb), 0.5);
-    animation: header-sheen 6s linear infinite;
+/* The enlarged view, created by js/lightbox.js. */
+.lightbox {
+    max-width: 94vw;
+    max-height: 94vh;
+    margin: auto;
+    padding: 0;
+    border: 2px solid var(--cyan);
+    background: var(--space-0);
+    cursor: zoom-out;
 }
 
-/* Screenshot carousel: a horizontal scroller showing one slide at a time,
-   snapping to each. The arrows are wired up in js/carousel.js. */
+.lightbox::backdrop {
+    background: rgba(5, 7, 15, 0.9);
+}
+
+.lightbox img {
+    max-width: 94vw;
+    max-height: 94vh;
+}
+/*#endregion*/
+
+/*#region ----- Homepage Screenshot Carousel */
+/* A horizontal scroller showing one slide at a time, snapping to each. The
+   arrows and auto-advance are wired up in js/carousel.js. */
 .carousel {
     position: relative;
     width: min(100%, 880px);
@@ -576,12 +733,14 @@ main {
 }
 
 .carousel-arrow {
+    --glow-size: 40px;
     position: absolute;
     top: 50%;
     z-index: 1;
     width: 44px;
     height: 44px;
     padding: 0 0 4px;
+    overflow: hidden;
     font: inherit;
     font-size: 30px;
     line-height: 1;
@@ -602,12 +761,15 @@ main {
 
 .carousel-arrow--prev { left: 12px; }
 .carousel-arrow--next { right: 12px; }
+/*#endregion*/
 
+/*#region ----- Trailer */
 .video-wrap {
     max-width: 880px;
     margin: 0 auto;
 }
 
+/* Fits both the stand-in below and the YouTube iframe that will replace it. */
 .video-frame {
     display: block;
     width: 100%;
@@ -667,69 +829,6 @@ main {
     font-size: var(--text-small);
     color: var(--text-dim);
 }
-
-.lightbox {
-    max-width: 94vw;
-    max-height: 94vh;
-    margin: auto;
-    padding: 0;
-    border: 2px solid var(--cyan);
-    background: var(--space-0);
-    cursor: zoom-out;
-}
-
-.lightbox::backdrop {
-    background: rgba(5, 7, 15, 0.9);
-}
-
-.lightbox img {
-    max-width: 94vw;
-    max-height: 94vh;
-}
-/*#endregion*/
-
-/*#region ----- Text Effects (glitch, corrupted and redacted tags) */
-/* Occasional colour-split stutter. data-text must match the heading text. */
-.glitch {
-    position: relative;
-    display: inline-block;
-}
-
-.glitch::before,
-.glitch::after {
-    content: attr(data-text);
-    position: absolute;
-    left: 0;
-    top: 0;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.glitch::before {
-    color: var(--cyan);
-    animation: glitch-split 1s steps(1) infinite;
-}
-
-.glitch::after {
-    color: var(--magenta);
-    animation: glitch-split 1s steps(1) infinite reverse;
-}
-
-@keyframes glitch-split {
-    0%, 79%, 100% { opacity: 0; transform: none; }
-    80% { opacity: 0.8; transform: translateX(-3px); }
-    87% { opacity: 0.8; transform: translateX(3px); }
-    94% { opacity: 0; transform: none; }
-}
-
-/* Corrupted and redacted text, as in the game's lore logs. */
-.corrupted {
-    color: var(--magenta);
-}
-
-.redacted {
-    color: var(--amber);
-}
 /*#endregion*/
 
 /*#region ----- Timelines (Story and Roadmap pages) */
@@ -772,25 +871,26 @@ main {
 
 .era-when {
     grid-area: when;
-    /* Level with the title inside the entry's box. */
-    padding-top: 14px;
     font-size: var(--text-small);
     letter-spacing: 0.08em;
     text-align: right;
     text-transform: uppercase;
 }
 
-.era--period .era-when { color: var(--cyan); }
-.era--event .era-when { color: var(--magenta); }
+/* An event's date sits level with the title inside its box. */
+.era--event .era-when {
+    padding-top: 14px;
+    color: var(--magenta);
+}
 
 /* A period's date starts level with the top of its line. */
 .era--period .era-when {
-    padding-top: 0;
     line-height: 1;
+    color: var(--cyan);
 }
 
 /* Each entry sits in its own box, outlined all round in a soft tint of its
-   type's colour. A period's box runs the full length of its bar, with the
+   type's colour. A period's box runs the full length of its line, with the
    text at the top. */
 .era-body {
     grid-area: body;
@@ -822,7 +922,6 @@ main {
     grid-area: marker;
     position: relative;
     justify-self: center;
-    flex: none;
 }
 
 /* Periods are a thin lit line running the length of the entry. */
@@ -854,11 +953,11 @@ main {
 .era-marker--event {
     width: 10px;
     height: 10px;
+    margin-top: 24px;
+    color: var(--magenta);
+    border-radius: 50%;
     background: currentColor;
     box-shadow: 0 0 0 4px var(--space-0), 0 0 0 5px currentColor, 0 0 14px 5px currentColor;
-    margin-top: 24px;
-    border-radius: 50%;
-    color: var(--magenta);
 }
 
 .era-marker--event::before,
@@ -951,6 +1050,7 @@ main {
 /*#endregion*/
 
 /*#region ----- Media Queries (keep last so they override everything above) */
+/* Phones. The burger menu has its own breakpoint in Mobile Navigation. */
 @media screen and (max-width: 640px) {
     :root {
         --text-h2: 24px;
@@ -958,6 +1058,10 @@ main {
         --text-lead: 19px;
         --text-body: 16px;
         --text-small: 14px;
+    }
+
+    .section {
+        padding: 40px 16px;
     }
 
     .site-nav {
@@ -968,12 +1072,15 @@ main {
         padding: 6px 12px;
     }
 
-    .feature-list {
-        grid-template-columns: 1fr;
+    /* Tightened so the status line stays on one row. */
+    .status-line {
+        gap: 10px;
+        letter-spacing: 0.08em;
+        white-space: nowrap;
     }
 
-    .section {
-        padding: 40px 16px;
+    .feature-list {
+        grid-template-columns: 1fr;
     }
 
     .carousel-arrow {
@@ -984,13 +1091,6 @@ main {
 
     .carousel-arrow--prev { left: 6px; }
     .carousel-arrow--next { right: 6px; }
-
-    /* Tightened so the status line stays on one row. */
-    .status-line {
-        gap: 10px;
-        letter-spacing: 0.08em;
-        white-space: nowrap;
-    }
 
     /* Dates move above their entry, leaving the spine on the left edge. */
     .timeline {
@@ -1007,107 +1107,16 @@ main {
         grid-template-rows: auto 1fr;
     }
 
-    .era-when {
-        text-align: left;
-        padding-top: 0;
+    .era--event .era-when,
+    .era--period .era-when {
         margin-left: var(--body-gap);
         margin-bottom: 6px;
+        padding-top: 0;
+        text-align: left;
     }
 
     .era-marker--event {
         margin-top: 6px;
-    }
-}
-
-/* Burger menu: below this width the page links no longer fit beside the brand
-   and wishlist button, so they collapse into a dropdown. Zooming in on a
-   desktop browser triggers this too. */
-@media screen and (max-width: 760px) {
-    .site-nav .button {
-        order: 1;
-    }
-
-    .nav-burger {
-        order: 2;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        cursor: pointer;
-    }
-
-    /* Three bars: the span is the middle one. They fold into a cross when open. */
-    .nav-burger span,
-    .nav-burger span::before,
-    .nav-burger span::after {
-        display: block;
-        width: 24px;
-        height: 2px;
-        border-radius: 1px;
-        background: var(--text);
-        transition: transform 0.2s ease-in-out, background 0.2s ease-in-out;
-    }
-
-    .nav-burger span {
-        position: relative;
-    }
-
-    .nav-burger span::before,
-    .nav-burger span::after {
-        content: "";
-        position: absolute;
-        left: 0;
-    }
-
-    .nav-burger span::before { top: -8px; }
-    .nav-burger span::after { top: 8px; }
-
-    .nav-toggle:checked + .nav-burger span { background: transparent; }
-    .nav-toggle:checked + .nav-burger span::before { transform: translateY(8px) rotate(45deg); }
-    .nav-toggle:checked + .nav-burger span::after { transform: translateY(-8px) rotate(-45deg); }
-
-    /* The checkbox stays focusable for keyboards but is visually hidden. */
-    .nav-toggle {
-        display: block;
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        opacity: 0;
-    }
-
-    .nav-toggle:focus-visible + .nav-burger {
-        outline: 2px solid var(--cyan);
-        outline-offset: 2px;
-    }
-
-    .nav-links {
-        display: none;
-        position: absolute;
-        top: calc(100% + 2px);
-        left: 0;
-        right: 0;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0;
-        padding: 8px 0;
-        background: var(--space-0);
-        border-bottom: 1px solid var(--space-3);
-    }
-
-    .nav-toggle:checked ~ .nav-links {
-        display: flex;
-    }
-
-    .nav-links .nav-link {
-        padding: 12px 24px;
-        border-bottom: 0;
-        border-left: 2px solid transparent;
-    }
-
-    .nav-links .nav-link:hover,
-    .nav-links .nav-link[aria-current="page"] {
-        border-left-color: var(--magenta);
     }
 }
 
