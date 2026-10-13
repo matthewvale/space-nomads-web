@@ -9,12 +9,13 @@
 
     dialog.addEventListener('click', () => dialog.close());
 
-    document.querySelectorAll('a.shot').forEach((link) => {
-        link.addEventListener('click', (event) => {
-            event.preventDefault();
-            image.src = link.href;
-            image.alt = link.querySelector('img')?.alt ?? '';
-            dialog.showModal();
-        });
+    // Listens on the document so slides the carousel adds later are covered too.
+    document.addEventListener('click', (event) => {
+        const link = event.target.closest('a.shot');
+        if (!link) return;
+        event.preventDefault();
+        image.src = link.href;
+        image.alt = link.querySelector('img')?.alt ?? '';
+        dialog.showModal();
     });
 })();

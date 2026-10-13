@@ -4,11 +4,11 @@
     --space-2: #111a30;
     --space-3: #1c2947;
     /* Accents */
-    --cyan: #2BA5E2;
+    --cyan: #07D5EE;
     --magenta: #ff60ff;
     --amber: #ffc46b;
     /* The same accents as bare RGB, for translucent tints: rgba(var(--cyan-rgb), 0.3) */
-    --cyan-rgb: 43, 165, 226;
+    --cyan-rgb: 7, 213, 238;
     --magenta-rgb: 255, 96, 255;
     /* Wishlist banner button, also used by the header wishlist button */
     --banner-fill: linear-gradient(90deg, #0a1730 0%, #0c3f93 45%, #3b2380 72%, #2b1136 100%);
@@ -106,7 +106,7 @@ body::before {
     z-index: -1;
     height: calc(100vh + var(--parallax-travel));
     background:
-        linear-gradient(rgba(5, 7, 15, 0.5), rgba(5, 7, 15, 0.5)),
+        linear-gradient(rgba(5, 7, 15, 0.75), rgba(5, 7, 15, 0.75)),
         url("../res/images/branding/bg.jpg") center / cover no-repeat,
         var(--space-0);
     transform: translateY(calc(var(--scroll-progress, 0) * -1 * var(--parallax-travel)));
@@ -610,6 +610,12 @@ html::-webkit-scrollbar-thumb:hover {
 .hero-tagline {
     max-width: 720px;
     font-size: var(--text-lead);
+    text-wrap: balance;
+}
+
+/* Extra room on top of the hero's gap, the same above (tagline) and below (carousel). */
+.hero .banner-button {
+    margin: 36px 0;
 }
 /*#endregion*/
 
@@ -710,7 +716,6 @@ html::-webkit-scrollbar-thumb:hover {
 .carousel {
     position: relative;
     width: min(100%, 880px);
-    margin-top: 28px;
 }
 
 .carousel-track {

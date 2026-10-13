@@ -8,14 +8,47 @@
         const track = carousel.querySelector('.carousel-track');
         let timer = null;
 
-        const step = (direction) => {
-            const last = track.scrollWidth - track.clientWidth;
-            let target = track.scrollLeft + direction * track.clientWidth;
-            // Wrap around at either end.
-            if (target > last + 1) target = 0;
-            if (target < -1) target = last;
-            track.scrollTo({ left: target, behavior: reducedMotion ? 'auto' : 'smooth' });
+        // To loop without rewinding, a copy of the last slide sits before the first and a
+        // copy of the first sits after the last. Scrolling onto a copy looks like carrying
+        // on round; once it settles, the track jumps unseen to the real slide it mirrors.
+        const slides = [...track.children];
+        const copies = [slides[slides.length - 1].cloneNode(true), slides[0].cloneNode(true)];
+        copies.forEach((copy) => {
+            copy.setAttribute('aria-hidden', 'true');
+            copy.tabIndex = -1;
+            copy.querySelector('img')?.removeAttribute('loading');
+        });
+        track.prepend(copies[0]);
+        track.append(copies[1]);
+
+        const stride = () => track.children[1].offsetLeft - track.children[0].offsetLeft;
+        const index = () => Math.round(track.scrollLeft / stride());
+        const jump = (i) => track.scrollTo({ left: i * stride(), behavior: 'instant' });
+
+        const leaveCopy = () => {
+            const last = track.children.length - 1;
+            if (index() === 0) jump(last - 1);
+            else if (index() === last) jump(1);
         };
+
+        const step = (direction) => {
+            leaveCopy();
+            track.scrollTo({ left: (index() + direction) * stride(), behavior: reducedMotion ? 'auto' : 'smooth' });
+        };
+
+        // Swipes and trackpads can land on a copy too. Safari has no scrollend, so there
+        // it waits for the scroll events to stop instead.
+        if ('onscrollend' in window) {
+            track.addEventListener('scrollend', leaveCopy);
+        } else {
+            let settle = null;
+            track.addEventListener('scroll', () => {
+                clearTimeout(settle);
+                settle = setTimeout(leaveCopy, 150);
+            }, { passive: true });
+        }
+
+        jump(1);
 
         const stop = () => {
             clearInterval(timer);
