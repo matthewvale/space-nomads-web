@@ -640,14 +640,46 @@ html::-webkit-scrollbar-thumb:hover {
 .feature {
     display: grid;
     grid-template-columns: 56px 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+        "icon body"
+        "number body";
     align-items: start;
     padding: 26px 0;
     border-top: 1px solid var(--space-3);
     counter-increment: feature;
 }
 
+/* Line icon above the number, stroked with the shared #feature-accent
+   gradient defined in index.html. */
+.feature-icon {
+    grid-area: icon;
+    width: 32px;
+    height: 32px;
+    margin-bottom: 8px;
+    fill: none;
+    stroke: url(#feature-accent);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 6px rgba(var(--cyan-rgb), 0.45));
+}
+
+.feature > div {
+    grid-area: body;
+}
+
+/* Holds the icons' gradient without taking up space. */
+.svg-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
 /* Number in the left column: 01, 02, ... */
 .feature::before {
+    grid-area: number;
     content: counter(feature, decimal-leading-zero);
     font-size: var(--text-h2);
     font-weight: 700;
