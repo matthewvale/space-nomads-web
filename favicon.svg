@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+    <!-- "SN" monogram in the site's cyan-to-magenta accent, drawn as strokes so
+         it needs no font. -->
+    <defs>
+        <linearGradient id="accent" x1="0" y1="0" x2="64" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#07D5EE"/>
+            <stop offset="1" stop-color="#ff60ff"/>
+        </linearGradient>
+    </defs>
+    <rect x="2" y="2" width="60" height="60" rx="12" fill="#05070f" stroke="url(#accent)" stroke-width="3"/>
+    <g fill="none" stroke="url(#accent)" stroke-width="6" stroke-linejoin="round">
+        <path d="M30 16H15a4 4 0 0 0-4 4v8a4 4 0 0 0 4 4h11a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H11"/>
+        <path d="M37 48V16l16 32V16"/>
+    </g>
+</svg>
